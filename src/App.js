@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import AdminBlogForm from './AdminBlogForm';
+import BlogCards from './BlogCards';
+import BlogDetails from './BlogDetails';
 
-function App() {
+const App = () => {
+  const [blogs, setBlogs] = useState([]);
+
+ 
+  useEffect(() => {
+    const storedBlogs = localStorage.getItem('blogs');
+    if (storedBlogs) {
+      setBlogs(JSON.parse(storedBlogs));
+    }
+  }, []);
+
+  
+  useEffect(() => {
+    if (blogs.length > 0) {
+      localStorage.setItem('blogs', JSON.stringify(blogs));
+    }
+  }, [blogs]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<AdminBlogForm blogs={blogs} setBlogs={setBlogs} />} />
+        <Route path="/blogs" element={<BlogCards blogs={blogs} />} />
+        <Route path="/blog-details" element={<BlogDetails />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
